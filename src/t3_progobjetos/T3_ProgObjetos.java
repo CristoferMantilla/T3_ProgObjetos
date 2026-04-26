@@ -13,8 +13,15 @@ public class T3_ProgObjetos {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         // TODO code application logic here
+        int a=10;
+        int b=20;
+        
+        int rpta=a+b;
+        
+        System.out.println("la suma de a+b es: "+rpta);
     }
     
 }
