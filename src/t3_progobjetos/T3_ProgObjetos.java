@@ -18,8 +18,8 @@ public class T3_ProgObjetos {
         // TODO code application logic here
         int a=10;
         int b=20;
-        
-        int rpta=a+b;
+        int c=25;
+        int rpta=a+b+c;
         
         System.out.println("la suma de a+b es: "+rpta);
     }
