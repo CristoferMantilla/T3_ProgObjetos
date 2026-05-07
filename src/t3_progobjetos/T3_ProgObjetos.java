@@ -21,7 +21,10 @@ public class T3_ProgObjetos {
         int c=25;
         int rpta=a+b+c;
         
-        System.out.println("la suma de a+b es: "+rpta);
+        int resta=a-b;
+        
+        System.out.println("la suma de a+b+c es: "+rpta);
+        System.out.println("la resta de a-b: "+resta);
     }
     
 }
