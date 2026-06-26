@@ -75,30 +75,25 @@ public class FrmEstudiantes extends javax.swing.JFrame{
                 btnRegistrarActionPerformed(evt);
             }
         });
-
         btnActualizar.setText("Actualizar");
         btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnActualizarActionPerformed(evt);
             }
         });
-
         btnEliminar.setText("Dar de Baja");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
             }
         });
-
         btnBuscar.setText("Buscar por Código");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuscarActionPerformed(evt);
             }
         });
-
         jScrollPane1.setViewportView(tblEstudiantes);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -149,28 +144,23 @@ public class FrmEstudiantes extends javax.swing.JFrame{
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
-
         pack();
     }
-
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {
         String msg = controlador.registrar(txtCodigo.getText(), txtNombre.getText());
         JOptionPane.showMessageDialog(this, msg);
         cargarTabla("");
     }
-
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {
         String msg = controlador.actualizar(txtCodigo.getText(), txtNombre.getText(), chkBloqueado.isSelected());
         JOptionPane.showMessageDialog(this, msg);
         cargarTabla("");
     }
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {
         String msg = controlador.darDeBaja(txtCodigo.getText());
         JOptionPane.showMessageDialog(this, msg);
         cargarTabla("");
     }
-
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {
         cargarTabla(txtCodigo.getText().trim());
     }
