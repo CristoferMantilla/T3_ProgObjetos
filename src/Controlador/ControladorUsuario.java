@@ -4,12 +4,16 @@
  */
 package Controlador;
 
-import Controlador.Estudiante;
+import Modelo.Estudiante;
+import Controlador.SesionActiva;
 import Controlador.UsuarioDAO;
 import java.util.List;
 
+/**
+ *
+ * @author crist
+ */
 public class ControladorUsuario {
-    
     private UsuarioDAO dao = new UsuarioDAO();
     private int intentosFallidos = 0; // Contador en memoria para el REQ-03
 
@@ -35,11 +39,11 @@ public class ControladorUsuario {
     }
 
     // Puente para Registrar Estudiante (REQ-06)
-    public String registrar(String codigo, String nombre) {
-        if (codigo.isEmpty() || nombre.isEmpty()) {
+    public String registrar(String codigo, String nombre1,String nombre2,String apepaterno,String apematerno) {
+        if (codigo.isEmpty() || nombre1.isEmpty() || nombre2.isEmpty() || apepaterno.isEmpty() || apematerno.isEmpty()) {
             return "Error: Llene todos los campos.";
         }
-        Estudiante est = new Estudiante(0, codigo, nombre, false);
+        Estudiante est = new Estudiante(0, codigo, nombre1, nombre2, apepaterno, apematerno, false);
         if (dao.registrarEstudiante(est)) {
             return "Estudiante registrado correctamente.";
         } else {
@@ -48,11 +52,11 @@ public class ControladorUsuario {
     }
 
     // Puente para Actualizar Estudiante (REQ-07)
-    public String actualizar(String codigo, String nombre, boolean bloqueado) {
+    public String actualizar(String codigo, String nombre1, String nombre2, String apepaterno, String apematerno, boolean bloqueado) {
         if (codigo.isEmpty()) {
             return "Error: Especifique el código a actualizar.";
         }
-        Estudiante est = new Estudiante(0, codigo, nombre, bloqueado);
+        Estudiante est = new Estudiante(0, codigo, nombre1, nombre2, apepaterno, apematerno, bloqueado);
         if (dao.editarEstudiante(est)) {
             return "Datos actualizados correctamente.";
         } else {

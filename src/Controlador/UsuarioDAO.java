@@ -4,10 +4,13 @@
  */
 package Controlador;
 
-import java.sql.*;
+import Modelo.Estudiante;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.ConexionSQL;
 
 /**
  *
@@ -32,7 +35,7 @@ public class UsuarioDAO {
         String sql = "INSERT INTO Usuarios (CodigoUPN, NombreCompleto, Rol, EstadoBloqueo) VALUES (?, ?, 'Estudiante', ?)";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getCodigoUPN());
-            pst.setString(2, est.getNombreCompleto());
+            pst.setString(2, est.getNombre1());
             pst.setBoolean(3, est.isEstadoBloqueo());
             return pst.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
@@ -42,7 +45,7 @@ public class UsuarioDAO {
     public boolean editarEstudiante(Estudiante est) {
         String sql = "UPDATE Usuarios SET NombreCompleto = ?, EstadoBloqueo = ? WHERE CodigoUPN = ?";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
-            pst.setString(1, est.getNombreCompleto());
+            pst.setString(1, est.getNombre1());
             pst.setBoolean(2, est.isEstadoBloqueo());
             pst.setString(3, est.getCodigoUPN());
             return pst.executeUpdate() > 0;
@@ -70,7 +73,7 @@ public class UsuarioDAO {
                 while (rs.next()) {
                     lista.add(new Estudiante(
                         rs.getInt("ID_Usuario"), rs.getString("CodigoUPN"),
-                        rs.getString("NombreCompleto"), rs.getBoolean("EstadoBloqueo")
+                        rs.getString("1er Nombre"), rs.getString("2do Nombre"),rs.getString("Apellido Paterno"),rs.getString("Apellido materno"), rs.getBoolean("EstadoBloqueo")
                     ));
                 }
             }

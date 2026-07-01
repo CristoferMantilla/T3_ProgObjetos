@@ -4,10 +4,14 @@
  */
 package Controlador;
 
-import java.sql.*;
+import Modelo.Equipo;
+import Modelo.Laptop;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.ConexionSQL;
 
 /**
  *
@@ -19,8 +23,8 @@ public class InventarioDAO {
         try (Connection cn = ConexionSQL.conectar();
              PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, eq.getCodigoPatrimonial());
-            pst.setString(2, eq.getCategoria());
-            pst.setString(3, eq.getMarca());
+            pst.setString(2, eq.getCategoria());//observar
+            pst.setString(3, eq.getMarca());//observar
             pst.setString(4, eq.getDetalleTecnico());
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -40,7 +44,7 @@ public class InventarioDAO {
                     rs.getInt("ID_Equipo"),
                     rs.getString("CodigoPatrimonial"),
                     rs.getString("Marca"),
-                    rs.getString("DetalleTecnico"),
+                    rs.getString("Categoria"),
                     rs.getBoolean("Disponible")
                 ));
             }

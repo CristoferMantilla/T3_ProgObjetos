@@ -11,3 +11,4 @@ package Controlador;
 public class SesionActiva {
     public static String nombreUsuarioActivo = "";
 }
+

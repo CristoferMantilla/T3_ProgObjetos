@@ -3,7 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Controlador;
-import java.util.List;
+
+import Modelo.Equipo;
+import Controlador.InventarioDAO;
+import Modelo.Laptop;
+
 /**
  *
  * @author crist

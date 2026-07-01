@@ -4,8 +4,12 @@
  */
 package Controlador;
 
+import Modelo.Prestamo;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.*;
-import modelo.ConexionSQL;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -50,5 +54,33 @@ public class PrestamoDAO {
                 System.out.println(e.getMessage());
             }
         }
+    }
+    public DefaultTableModel obtenerModeloUltimosMovimientos() {
+        String[] columnas = {"ID Préstamo", "Usuario (UPN)", "Equipo", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+        
+        // Unimos las 3 tablas para traer los datos legibles
+        String sql = "SELECT p.ID_Prestamo, u.CodigoUPN, i.CodigoPatrimonial, p.Estado " +
+                     "FROM Prestamos p " +
+                     "INNER JOIN Usuarios u ON p.ID_Usuario = u.ID_Usuario " +
+                     "INNER JOIN Inventario i ON p.ID_Equipo = i.ID_Equipo " +
+                     "ORDER BY p.FechaSalida DESC";
+                     
+        try (Connection cn = ConexionSQL.conectar();
+             PreparedStatement pst = cn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+             
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("ID_Prestamo"),
+                    rs.getString("CodigoUPN"),
+                    rs.getString("CodigoPatrimonial"),
+                    rs.getString("Estado")
+                });
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al cargar movimientos: " + e.getMessage());
+        }
+        return modelo;
     }
 }

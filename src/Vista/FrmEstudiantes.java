@@ -5,7 +5,7 @@
 package Vista;
 import javax.swing.JOptionPane;
 import Controlador.ControladorUsuario;
-import Controlador.Estudiante;
+import Modelo.Estudiante;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -22,11 +22,17 @@ public class FrmEstudiantes extends javax.swing.JFrame{
     private javax.swing.JButton btnRegistrar;
     private javax.swing.JCheckBox chkBloqueado;
     private javax.swing.JLabel lblCodigo;
-    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblNombre1;
+    private javax.swing.JLabel lblNombre2;
+    private javax.swing.JLabel lblApePaterno;
+    private javax.swing.JLabel lblApeMaterno;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblEstudiantes;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtNombre1;
+    private javax.swing.JTextField txtNombre2;
+    private javax.swing.JTextField txtApePaterno;
+    private javax.swing.JTextField txtApeMaterno;
 
     public FrmEstudiantes() {
         initComponents();
@@ -36,13 +42,13 @@ public class FrmEstudiantes extends javax.swing.JFrame{
 
     private void cargarTabla(String filtro) {
         DefaultTableModel modelo = new DefaultTableModel();
-        modelo.setColumnIdentifiers(new Object[]{"Código UPN", "Nombre Completo", "Estado actual"});
+        modelo.setColumnIdentifiers(new Object[]{"Código UPN", "1ER Nombre", "2DO Nombre","Ape Paterno","Ape Materno", "Estado actual"});
         tblEstudiantes.setModel(modelo);
 
         for (Estudiante est : controlador.obtenerLista(filtro)) {
             modelo.addRow(new Object[]{
                 est.getCodigoUPN(),
-                est.getNombreCompleto(),
+                est.getNombre1(),
                 est.isEstadoBloqueo() ? "Bloqueado" : "Activo"
             });
         }
@@ -52,8 +58,14 @@ public class FrmEstudiantes extends javax.swing.JFrame{
 
         lblCodigo = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
-        lblNombre = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
+        lblNombre1 = new javax.swing.JLabel();
+        lblNombre2 = new javax.swing.JLabel();
+        lblApePaterno = new javax.swing.JLabel();
+        lblApeMaterno = new javax.swing.JLabel();
+        txtNombre1 = new javax.swing.JTextField();
+        txtNombre2 = new javax.swing.JTextField();
+        txtApePaterno = new javax.swing.JTextField();
+        txtApeMaterno = new javax.swing.JTextField();
         chkBloqueado = new javax.swing.JCheckBox();
         btnRegistrar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
@@ -66,7 +78,10 @@ public class FrmEstudiantes extends javax.swing.JFrame{
         setTitle("Gestión de Estudiantes");
 
         lblCodigo.setText("Código UPN:");
-        lblNombre.setText("Nombre Completo:");
+        lblNombre1.setText("1ER Nombre:");
+        lblNombre2.setText("2DO Nombre:");
+        lblApePaterno.setText("APE Paterno:");
+        lblApeMaterno.setText("APE Materno:");
         chkBloqueado.setText("¿Estudiante Bloqueado?");
 
         btnRegistrar.setText("Registrar");
@@ -108,19 +123,34 @@ public class FrmEstudiantes extends javax.swing.JFrame{
                             .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNombre)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblNombre1)
+                            .addComponent(txtNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(chkBloqueado))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNombre2)
+                            .addComponent(txtNombre2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblApePaterno)
+                            .addComponent(txtApePaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblApeMaterno)
+                            .addComponent(txtApeMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(chkBloqueado))
+                    ) // <-- SOLUCIÓN: Faltaba este paréntesis para cerrar el grupo de los textfields
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(30) // <-- Separación fija de 25 píxeles
+                    .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(30) // <-- Separación fija de 25 píxeles
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(30) // <-- Separación fija de 25 píxeles (Adiós al MAX_VALUE)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                )
+            )
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -128,11 +158,17 @@ public class FrmEstudiantes extends javax.swing.JFrame{
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigo)
-                    .addComponent(lblNombre))
+                    .addComponent(lblNombre1)
+                    .addComponent(lblNombre2)
+                    .addComponent(lblApePaterno)
+                    .addComponent(lblApeMaterno))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtApePaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtApeMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(chkBloqueado))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -141,18 +177,18 @@ public class FrmEstudiantes extends javax.swing.JFrame{
                     .addComponent(btnEliminar)
                     .addComponent(btnBuscar))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         pack();
     }
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {
-        String msg = controlador.registrar(txtCodigo.getText(), txtNombre.getText());
+        String msg = controlador.registrar(txtCodigo.getText(), txtNombre1.getText(), txtNombre2.getText(), txtApePaterno.getText(),txtApeMaterno.getText());
         JOptionPane.showMessageDialog(this, msg);
         cargarTabla("");
     }
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {
-        String msg = controlador.actualizar(txtCodigo.getText(), txtNombre.getText(), chkBloqueado.isSelected());
+        String msg = controlador.actualizar(txtCodigo.getText(), txtNombre1.getText(), txtNombre2.getText(), txtApePaterno.getText(),txtApeMaterno.getText(), chkBloqueado.isSelected());
         JOptionPane.showMessageDialog(this, msg);
         cargarTabla("");
     }

@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Controlador;
+package Modelo;
 
 /**
  *
  * @author crist
  */
-public abstract class Equipo implements IPrestable{
+public abstract class Equipo implements Prestable{
 
     public int getIdEquipo() {
         return idEquipo;

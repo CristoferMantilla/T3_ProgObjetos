@@ -5,143 +5,165 @@
 package Vista;
 
 import Controlador.SesionActiva;
+import Controlador.ControladorPrestamo;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
+public class FrmMenuPrincipal extends JFrame {
 
-public class FrmMenuPrincipal extends javax.swing.JFrame {
-
-    // Declaración de variables de NetBeans
-    private javax.swing.JButton btnCerrarSesion;
-    private javax.swing.JButton btnInventario;
-    private javax.swing.JButton btnPrestamos;
-    private javax.swing.JButton btnReportes;
-    private javax.swing.JButton btnUsuarios;
-    private javax.swing.JLabel lblBienvenida;
-    private javax.swing.JLabel lblTitulo;
+    private JPanel pnlMenuLateral;
+    private JPanel pnlCentral;
+    private CardLayout cardLayout;
 
     public FrmMenuPrincipal() {
         initComponents();
-        this.setLocationRelativeTo(null); // Centra la ventana
-        // Muestra el nombre del administrador activo
-        lblBienvenida.setText("Usuario activo: " + SesionActiva.nombreUsuarioActivo);
+        this.setLocationRelativeTo(null);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     private void initComponents() {
+        setTitle("Sistema de Préstamos - Laboratorio UPN");
+        setSize(1000, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        lblTitulo = new javax.swing.JLabel();
-        lblBienvenida = new javax.swing.JLabel();
-        btnInventario = new javax.swing.JButton();
-        btnUsuarios = new javax.swing.JButton();
-        btnPrestamos = new javax.swing.JButton();
-        btnReportes = new javax.swing.JButton();
-        btnCerrarSesion = new javax.swing.JButton();
+        // ==========================================
+        // 1. MENÚ LATERAL (OESTE)
+        // ==========================================
+        pnlMenuLateral = new JPanel();
+        pnlMenuLateral.setBackground(new Color(30, 39, 46));
+        pnlMenuLateral.setPreferredSize(new Dimension(250, 0));
+        pnlMenuLateral.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Panel de Control Principal");
-        setResizable(false);
+        JLabel lblMenuTitulo = new JLabel("MENÚ PRINCIPAL");
+        lblMenuTitulo.setForeground(Color.WHITE);
+        lblMenuTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblMenuTitulo.setPreferredSize(new Dimension(200, 30));
+        
+        JLabel lblUsuario = new JLabel("Usuario: " + SesionActiva.nombreUsuarioActivo);
+        lblUsuario.setForeground(new Color(153, 204, 255));
+        lblUsuario.setPreferredSize(new Dimension(200, 30));
 
-        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 16)); 
-        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("PANEL DE CONTROL - LOGÍSTICA");
+        JButton btnInicio = crearBotonMenu("Inicio");
+        JButton btnEquipos = crearBotonMenu("Equipos");
+        JButton btnEstudiantes = crearBotonMenu("Registro Estudiantes");
+        JButton btnUsuarios = crearBotonMenu("Usuarios");
+        JButton btnPrestamos = crearBotonMenu("Préstamos");
+        JButton btnSalir = crearBotonMenu("Cerrar Sesión");
+        btnSalir.setForeground(new Color(255, 102, 102));
 
-        lblBienvenida.setForeground(new java.awt.Color(0, 102, 204));
-        lblBienvenida.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblBienvenida.setText("Usuario activo: ---");
+        pnlMenuLateral.add(lblMenuTitulo);
+        pnlMenuLateral.add(lblUsuario);
+        pnlMenuLateral.add(btnInicio);
+        pnlMenuLateral.add(btnEquipos);
+        pnlMenuLateral.add(btnEstudiantes);
+        pnlMenuLateral.add(btnUsuarios);
+        pnlMenuLateral.add(btnPrestamos);
+        pnlMenuLateral.add(btnSalir);
 
-        btnInventario.setText("Módulo Gestión de Inventario (Equipos)");
-        btnInventario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInventarioActionPerformed(evt);
-            }
+        // ==========================================
+        // 2. PANEL CENTRAL (CARDLAYOUT)
+        // ==========================================
+        cardLayout = new CardLayout();
+        pnlCentral = new JPanel(cardLayout);
+        
+        // A. Carta de Inicio (Dashboard con Base de Datos)
+        JPanel pnlInicio = construirPanelDashboard();
+        
+        // B. Metemos tus Formularios existentes extrayendo su contenido (El truco maestro)
+        // Nota: Asegúrate de tener creados estos JFrame en tu paquete vista
+        JPanel pnlEquipos = (JPanel) new FrmInventario().getContentPane();
+        JPanel pnlEstudiantes = (JPanel) new FrmEstudiantes().getContentPane();
+        JPanel pnlUsuarios = (JPanel) new FrmUsuarios().getContentPane();
+        JPanel pnlPrestamos = (JPanel) new FrmPrestamos().getContentPane();
+        
+        // Agregamos las "cartas" a la baraja
+        pnlCentral.add(pnlInicio, "INICIO");
+        pnlCentral.add(pnlEquipos, "EQUIPOS");
+        pnlCentral.add(pnlEstudiantes, "ESTUDIANTES");
+        pnlCentral.add(pnlUsuarios, "USUARIOS");
+        pnlCentral.add(pnlPrestamos, "PRESTAMOS");
+        // pnlCentral.add((JPanel) new FrmPrestamos().getContentPane(), "PRESTAMOS"); // Descomenta cuando lo crees
+
+        // ==========================================
+        // 3. NAVEGACIÓN DE BOTONES
+        // ==========================================
+        btnInicio.addActionListener(e -> cardLayout.show(pnlCentral, "INICIO"));
+        btnEquipos.addActionListener(e -> cardLayout.show(pnlCentral, "EQUIPOS"));
+        btnEstudiantes.addActionListener(e -> cardLayout.show(pnlCentral, "ESTUDIANTES"));
+        btnUsuarios.addActionListener(e -> cardLayout.show(pnlCentral, "USUARIOS"));
+        btnPrestamos.addActionListener(e -> cardLayout.show(pnlCentral, "PRESTAMOS"));
+        
+        btnSalir.addActionListener(e -> {
+            SesionActiva.nombreUsuarioActivo = "";
+            this.dispose();
+            new FrmLogin().setVisible(true);
         });
 
-        btnUsuarios.setText("Módulo Gestión de Usuarios (Estudiantes)");
-        btnUsuarios.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUsuariosActionPerformed(evt);
-            }
-        });
-
-        btnPrestamos.setText("Módulo Préstamos y Devoluciones");
-        btnPrestamos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrestamosActionPerformed(evt);
-            }
-        });
-
-        btnReportes.setText("Módulo Reportes y Archivos");
-        btnReportes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReportesActionPerformed(evt);
-            }
-        });
-
-        btnCerrarSesion.setBackground(new java.awt.Color(255, 102, 102));
-        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
-        btnCerrarSesion.setText("Cerrar Sesión");
-        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCerrarSesionActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                    .addComponent(lblBienvenida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnInventario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnPrestamos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnReportes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(50, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(lblTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblBienvenida)
-                .addGap(25, 25, 25)
-                .addComponent(btnInventario, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(btnPrestamos, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(btnReportes, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-
-        pack();
+        add(pnlMenuLateral, BorderLayout.WEST);
+        add(pnlCentral, BorderLayout.CENTER);
     }
 
-    private void btnInventarioActionPerformed(java.awt.event.ActionEvent evt) {
-        new FrmInventario().setVisible(true);
+    private JButton crearBotonMenu(String texto) {
+        JButton boton = new JButton(texto);
+        boton.setPreferredSize(new Dimension(220, 45));
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        boton.setHorizontalAlignment(SwingConstants.LEFT);
+        boton.setFocusPainted(false);
+        boton.setBackground(new Color(47, 53, 66));
+        boton.setForeground(Color.WHITE);
+        boton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return boton;
     }
 
-    private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {
-        new FrmEstudiantes().setVisible(true);
-    }
+    private JPanel construirPanelDashboard() {
+        JPanel panel = new JPanel(new BorderLayout(20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        panel.setBackground(new Color(245, 246, 250));
 
-    private void btnPrestamosActionPerformed(java.awt.event.ActionEvent evt) {
-        new FrmPrestamos().setVisible(true);
-    }
+        JLabel lblTitulo = new JLabel("RESUMEN DE INVENTARIO");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        panel.add(lblTitulo, BorderLayout.NORTH);
 
-    private void btnReportesActionPerformed(java.awt.event.ActionEvent evt) {
-        // new FrmReportes().setVisible(true); // Descomenta cuando crees esta ventana
-    }
+        JPanel pnlResumen = new JPanel(new GridLayout(1, 2, 20, 0));
+        pnlResumen.setBackground(new Color(245, 246, 250));
 
-    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {
-        SesionActiva.nombreUsuarioActivo = ""; // Limpia el usuario
-        this.dispose(); // Cierra el menú
-        new FrmLogin().setVisible(true); // Regresa al Login
+        // Aquí podrías crear métodos similares en tu InventarioDAO para contar esto de la BD
+        JLabel lblDisponibles = new JLabel("Equipos Disponibles: --");
+        lblDisponibles.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        
+        JLabel lblPrestamo = new JLabel("En Préstamo: --");
+        lblPrestamo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        pnlResumen.add(lblDisponibles);
+        pnlResumen.add(lblPrestamo);
+
+        JPanel pnlTabla = new JPanel(new BorderLayout(0, 10));
+        pnlTabla.setBackground(new Color(245, 246, 250));
+        
+        JLabel lblTabla = new JLabel("ÚLTIMOS MOVIMIENTOS");
+        lblTabla.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        
+        // ¡Magia Pura! Aquí jalamos el modelo directo desde SQL Server usando el Controlador
+        ControladorPrestamo ctrlPrestamo = new ControladorPrestamo();
+        JTable tablaMovimientos = new JTable(ctrlPrestamo.cargarTablaDashboard());
+        tablaMovimientos.setRowHeight(30);
+        JScrollPane scrollTabla = new JScrollPane(tablaMovimientos);
+
+        pnlTabla.add(lblTabla, BorderLayout.NORTH);
+        pnlTabla.add(scrollTabla, BorderLayout.CENTER);
+
+        JPanel pnlCentroGlobal = new JPanel(new BorderLayout(0, 30));
+        pnlCentroGlobal.setBackground(new Color(245, 246, 250));
+        pnlCentroGlobal.add(pnlResumen, BorderLayout.NORTH);
+        pnlCentroGlobal.add(pnlTabla, BorderLayout.CENTER);
+
+        panel.add(pnlCentroGlobal, BorderLayout.CENTER);
+
+        return panel;
     }
 }
