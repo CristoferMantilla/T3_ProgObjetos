@@ -6,6 +6,7 @@ package Vista;
 import javax.swing.JOptionPane;
 import Controlador.ControladorUsuario;
 import Modelo.Estudiante;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -42,15 +43,24 @@ public class FrmEstudiantes extends javax.swing.JFrame{
 
     private void cargarTabla(String filtro) {
         DefaultTableModel modelo = new DefaultTableModel();
-        modelo.setColumnIdentifiers(new Object[]{"Código UPN", "1ER Nombre", "2DO Nombre","Ape Paterno","Ape Materno", "Estado actual"});
+        modelo.setColumnIdentifiers(new Object[]{"Código UPN", "1ER Nombre", "2DO Nombre", "Ape Paterno", "Ape Materno", "Estado actual"});
         tblEstudiantes.setModel(modelo);
 
-        for (Estudiante est : controlador.obtenerLista(filtro)) {
-            modelo.addRow(new Object[]{
-                est.getCodigoUPN(),
-                est.getNombre1(),
-                est.isEstadoBloqueo() ? "Bloqueado" : "Activo"
-            });
+        // Llamamos al controlador para que traiga la lista actualizada
+        List<Estudiante> lista = controlador.obtenerLista(filtro);
+        
+        // Validamos que la lista no esté vacía para evitar errores
+        if (lista != null) {
+            for (Estudiante est : lista) {
+                modelo.addRow(new Object[]{
+                    est.getCodigoUPN(),
+                    est.getNombre1(),
+                    est.getNombre2(), // Ahora sí carga el segundo nombre (o el espacio vacío si es null)
+                    est.getApellido_paterno(),
+                    est.getApellido_materno(),
+                    est.isEstadoBloqueo() ? "Bloqueado" : "Activo"
+                });
+            }
         }
     }
 

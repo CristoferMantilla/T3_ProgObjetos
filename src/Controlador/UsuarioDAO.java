@@ -19,12 +19,12 @@ import java.util.List;
 public class UsuarioDAO {
     // REQ-01 y REQ-04: Validar Login verificando contraseña (simulando encriptación básica)
     public String validarLogin(String codigo, String password) {
-        String sql = "SELECT NombreCompleto FROM Usuarios WHERE CodigoUPN = ? AND Contrasena = ? AND Rol = 'Administrador'";
+        String sql = "SELECT Nombre1 FROM Usuarios WHERE CodigoUPN = ? AND Contrasena = ? AND Rol = 'Administrador'";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, codigo);
             pst.setString(2, password); // En un entorno real, aquí se usaría un hash (ej. SHA-256)
             try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next()) return rs.getString("NombreCompleto");
+                if (rs.next()) return rs.getString("Nombre1");
             }
         } catch (SQLException e) { System.out.println(e.getMessage()); }
         return null;
@@ -32,7 +32,7 @@ public class UsuarioDAO {
 
     // REQ-06: Registrar un nuevo estudiante
     public boolean registrarEstudiante(Estudiante est) {
-        String sql = "INSERT INTO Usuarios (CodigoUPN, NombreCompleto, Rol, EstadoBloqueo) VALUES (?, ?, 'Estudiante', ?)";
+        String sql = "INSERT INTO Usuarios (CodigoUPN, Nombre1, Rol, EstadoBloqueo) VALUES (?, ?, 'Estudiante', ?)";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getCodigoUPN());
             pst.setString(2, est.getNombre1());
@@ -43,7 +43,7 @@ public class UsuarioDAO {
 
     // REQ-07: Editar datos personales
     public boolean editarEstudiante(Estudiante est) {
-        String sql = "UPDATE Usuarios SET NombreCompleto = ?, EstadoBloqueo = ? WHERE CodigoUPN = ?";
+        String sql = "UPDATE Usuarios SET Nombre1 = ?, EstadoBloqueo = ? WHERE CodigoUPN = ?";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getNombre1());
             pst.setBoolean(2, est.isEstadoBloqueo());
@@ -67,17 +67,31 @@ public class UsuarioDAO {
         String sql = filtroCodigo.isEmpty() ? 
                      "SELECT * FROM Usuarios WHERE Rol = 'Estudiante'" : 
                      "SELECT * FROM Usuarios WHERE Rol = 'Estudiante' AND CodigoUPN = ?";
+        
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             if (!filtroCodigo.isEmpty()) pst.setString(1, filtroCodigo);
+            
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
+                    // Validamos el segundo nombre por si viene NULL desde la base de datos
+                    String segundoNombre = rs.getString("Nombre2");
+                    String nombre2Limpio = (segundoNombre == null) ? "" : segundoNombre;
+                    
                     lista.add(new Estudiante(
-                        rs.getInt("ID_Usuario"), rs.getString("CodigoUPN"),
-                        rs.getString("1er Nombre"), rs.getString("2do Nombre"),rs.getString("Apellido Paterno"),rs.getString("Apellido materno"), rs.getBoolean("EstadoBloqueo")
+                        rs.getInt("ID_Usuario"), 
+                        rs.getString("CodigoUPN"),
+                        rs.getString("Nombre1"),    // <-- Corregido
+                        nombre2Limpio,              // <-- Corregido con validación NULL
+                        rs.getString("ApePaterno"), // <-- Corregido
+                        rs.getString("ApeMaterno"), // <-- Corregido
+                        rs.getBoolean("EstadoBloqueo")
                     ));
                 }
             }
-        } catch (SQLException e) { System.out.println(e.getMessage()); }
+        } catch (SQLException e) { 
+            System.out.println(e.getMessage()); 
+        }
+        
         return lista;
     }
 }

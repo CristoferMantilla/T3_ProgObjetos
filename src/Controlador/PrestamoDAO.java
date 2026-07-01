@@ -59,8 +59,9 @@ public class PrestamoDAO {
         String[] columnas = {"ID Préstamo", "Usuario (UPN)", "Equipo", "Estado"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
         
-        // Unimos las 3 tablas para traer los datos legibles
-        String sql = "SELECT p.ID_Prestamo, u.CodigoUPN, i.CodigoPatrimonial, p.Estado " +
+        // Unimos las 3 tablas para traer los datos legibles. 
+        // CORRECCIÓN: Cambiamos p.Estado por p.EstadoPrestamo
+        String sql = "SELECT p.ID_Prestamo, u.CodigoUPN, i.CodigoPatrimonial, p.EstadoPrestamo " +
                      "FROM Prestamos p " +
                      "INNER JOIN Usuarios u ON p.ID_Usuario = u.ID_Usuario " +
                      "INNER JOIN Inventario i ON p.ID_Equipo = i.ID_Equipo " +
@@ -75,7 +76,7 @@ public class PrestamoDAO {
                     rs.getInt("ID_Prestamo"),
                     rs.getString("CodigoUPN"),
                     rs.getString("CodigoPatrimonial"),
-                    rs.getString("Estado")
+                    rs.getString("EstadoPrestamo") // <-- CORRECCIÓN AQUÍ TAMBIÉN
                 });
             }
         } catch (SQLException e) {

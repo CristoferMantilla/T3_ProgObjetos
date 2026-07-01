@@ -36,7 +36,7 @@ public class FrmInventario extends javax.swing.JFrame {
 
     private void cargarTabla() {
         DefaultTableModel modelo = new DefaultTableModel();
-        modelo.setColumnIdentifiers(new Object[]{"ID", "Código Patrimonial","Categoria","Marca", "Estado"});
+        modelo.setColumnIdentifiers(new Object[]{"ID", "Código Patrimonial","Categoria","Marca","Detalle Tecnico", "Estado"});
         tblInventario.setModel(modelo);
 
         for (Equipo eq : controlador.obtainEquipos()) {
@@ -45,6 +45,7 @@ public class FrmInventario extends javax.swing.JFrame {
                 eq.getCodigoPatrimonial(),
                 eq.getCategoria(),
                 eq.getMarca(),
+                eq.getDetalleTecnico(),
                 eq.isDisponible() ? "Disponible" : "Prestado"
             });
         }
@@ -129,8 +130,19 @@ public class FrmInventario extends javax.swing.JFrame {
     }
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
-        String msg = controlador.registrarNuevoEquipo(txtCodigo.getText(), txtMarca.getText(), txtDetalle.getText());
-        JOptionPane.showMessageDialog(this, msg);
-        cargarTabla();
+        // 1. Capturamos lo que el usuario eligió en el desplegable
+    String tipoElegido = cmbRol.getSelectedItem().toString();
+    
+    // 2. Se lo pasamos al controlador (nota que agregamos tipoElegido al final)
+    String msg = controlador.registrarNuevoEquipo(
+        txtCodigo.getText(), 
+        txtMarca.getText(), 
+        txtDetalle.getText(), 
+        tipoElegido
+    );
+    
+    // 3. Mostramos el mensaje y actualizamos la tabla
+    JOptionPane.showMessageDialog(this, msg);
+    cargarTabla();
     }
 }
