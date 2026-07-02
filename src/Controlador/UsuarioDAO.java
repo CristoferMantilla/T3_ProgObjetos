@@ -32,22 +32,28 @@ public class UsuarioDAO {
 
     // REQ-06: Registrar un nuevo estudiante
     public boolean registrarEstudiante(Estudiante est) {
-        String sql = "INSERT INTO Usuarios (CodigoUPN, Nombre1, Rol, EstadoBloqueo) VALUES (?, ?, 'Estudiante', ?)";
+        String sql = "INSERT INTO Usuarios (CodigoUPN, Nombre1,Nombre2,ApePaterno,ApeMaterno, Rol, EstadoBloqueo) VALUES (?, ?, ?, ?, ?, 'Estudiante', ?)";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getCodigoUPN());
             pst.setString(2, est.getNombre1());
-            pst.setBoolean(3, est.isEstadoBloqueo());
+            pst.setString(3, est.getNombre2());
+            pst.setString(4, est.getApellido_paterno());
+            pst.setString(5, est.getApellido_materno());
+            pst.setBoolean(6, est.isEstadoBloqueo());
             return pst.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
 
     // REQ-07: Editar datos personales
     public boolean editarEstudiante(Estudiante est) {
-        String sql = "UPDATE Usuarios SET Nombre1 = ?, EstadoBloqueo = ? WHERE CodigoUPN = ?";
+        String sql = "UPDATE Usuarios SET Nombre1 = ?,Nombre2 = ?, ApePaterno = ?,ApeMaterno = ?,EstadoBloqueo = ? WHERE CodigoUPN = ?";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getNombre1());
-            pst.setBoolean(2, est.isEstadoBloqueo());
-            pst.setString(3, est.getCodigoUPN());
+            pst.setString(2, est.getNombre2());
+            pst.setString(3, est.getApellido_paterno());
+            pst.setString(4, est.getApellido_materno());
+            pst.setBoolean(5, est.isEstadoBloqueo());
+            pst.setString(6, est.getCodigoUPN());
             return pst.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
