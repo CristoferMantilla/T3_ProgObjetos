@@ -16,10 +16,19 @@ public class Estudiante extends Usuario{
         this.estadoBloqueo = estadoBloqueo;
     }
 
+    public Estudiante() {
+        
+    }
     
     @Override
     public String getRol() { return "Estudiante"; }
     
-    public boolean isEstadoBloqueo() { return estadoBloqueo; }
-    public void setEstadoBloqueo(boolean estadoBloqueo) { this.estadoBloqueo = estadoBloqueo; }
+    public boolean isEstadoBloqueo() 
+    { 
+        return estadoBloqueo; 
+    }
+    public void setEstadoBloqueo(boolean estadoBloqueo) 
+    { 
+        this.estadoBloqueo = estadoBloqueo; 
+    }
 }

@@ -32,11 +32,20 @@ public class UsuarioDAO {
 
     // REQ-06: Registrar un nuevo estudiante
     public boolean registrarEstudiante(Estudiante est) {
-        String sql = "INSERT INTO Usuarios (CodigoUPN, Nombre1,Nombre2,ApePaterno,ApeMaterno, Rol, EstadoBloqueo) VALUES (?, ?, ?, ?, ?, 'Estudiante', ?)";
+        String sql = "INSERT INTO Usuarios (CodigoUPN, Nombre1, Nombre2, ApePaterno, ApeMaterno, Rol, EstadoBloqueo) VALUES (?, ?, ?, ?, ?, 'Estudiante', ?)";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getCodigoUPN());
             pst.setString(2, est.getNombre1());
-            pst.setString(3, est.getNombre2());
+            
+            // =========================================================
+            // VALIDACIÓN: Si el Nombre 2 viene vacío o nulo, manda un NULL a SQL
+            // =========================================================
+            if (est.getNombre2() == null || est.getNombre2().trim().isEmpty()) {
+                pst.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                pst.setString(3, est.getNombre2());
+            }
+            
             pst.setString(4, est.getApellido_paterno());
             pst.setString(5, est.getApellido_materno());
             pst.setBoolean(6, est.isEstadoBloqueo());
@@ -46,10 +55,19 @@ public class UsuarioDAO {
 
     // REQ-07: Editar datos personales
     public boolean editarEstudiante(Estudiante est) {
-        String sql = "UPDATE Usuarios SET Nombre1 = ?,Nombre2 = ?, ApePaterno = ?,ApeMaterno = ?,EstadoBloqueo = ? WHERE CodigoUPN = ?";
+        String sql = "UPDATE Usuarios SET Nombre1 = ?, Nombre2 = ?, ApePaterno = ?, ApeMaterno = ?, EstadoBloqueo = ? WHERE CodigoUPN = ?";
         try (Connection cn = ConexionSQL.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
             pst.setString(1, est.getNombre1());
-            pst.setString(2, est.getNombre2());
+            
+            // =========================================================
+            // VALIDACIÓN: Aquí el Nombre 2 es el parámetro número 2
+            // =========================================================
+            if (est.getNombre2() == null || est.getNombre2().trim().isEmpty()) {
+                pst.setNull(2, java.sql.Types.VARCHAR);
+            } else {
+                pst.setString(2, est.getNombre2());
+            }
+            
             pst.setString(3, est.getApellido_paterno());
             pst.setString(4, est.getApellido_materno());
             pst.setBoolean(5, est.isEstadoBloqueo());
@@ -86,10 +104,10 @@ public class UsuarioDAO {
                     lista.add(new Estudiante(
                         rs.getInt("ID_Usuario"), 
                         rs.getString("CodigoUPN"),
-                        rs.getString("Nombre1"),    // <-- Corregido
-                        nombre2Limpio,              // <-- Corregido con validación NULL
-                        rs.getString("ApePaterno"), // <-- Corregido
-                        rs.getString("ApeMaterno"), // <-- Corregido
+                        rs.getString("Nombre1"),    
+                        nombre2Limpio,              
+                        rs.getString("ApePaterno"), 
+                        rs.getString("ApeMaterno"), 
                         rs.getBoolean("EstadoBloqueo")
                     ));
                 }

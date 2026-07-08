@@ -10,7 +10,9 @@ package Modelo;
  */
 public class Componente extends Equipo{
     private String tipoSensor;
-
+    public Componente() {
+        
+    }
     public Componente(int idEquipo, String codigoPatrimonial, String marca, String tipoSensor, boolean disponible) {
         // Llama al constructor del padre (Equipo)
         super(idEquipo, codigoPatrimonial, "Componente", marca, disponible);

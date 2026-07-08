@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class ControladorUsuario {
     private UsuarioDAO dao = new UsuarioDAO();
-    private int intentosFallidos = 0; // Contador en memoria para el REQ-03
+    private int intentosFallidos = 0; // Contador en memoria
 
     // Puente para el Login (REQ-01, REQ-03, REQ-04)
     public String procesarLogin(String codigo, String password) {
         // 1. Verificamos si ya está bloqueado antes de ir a la base de datos
-        if (intentosFallidos >= 3) {
+        if (intentosFallidos > 1) {
             return "BLOQUEADO"; 
         }
         
@@ -29,7 +29,7 @@ public class ControladorUsuario {
         
         // 3. Evaluamos la respuesta
         if (nombreAdmin != null) {
-            SesionActiva.nombreUsuarioActivo = nombreAdmin; // Guardamos quién entró (REQ-05)
+            SesionActiva.nombreUsuarioActivo = nombreAdmin; //
             intentosFallidos = 0; // Reseteamos los intentos porque entró con éxito
             return "EXITO";
         } else {
@@ -40,9 +40,10 @@ public class ControladorUsuario {
 
     // Puente para Registrar Estudiante (REQ-06)
     public String registrar(String codigo, String nombre1,String nombre2,String apepaterno,String apematerno) {
-        if (codigo.isEmpty() || nombre1.isEmpty() || nombre2.isEmpty() || apepaterno.isEmpty() || apematerno.isEmpty()) {
-            return "Error: Llene todos los campos.";
+        if (codigo.isEmpty() || nombre1.isEmpty() || apepaterno.isEmpty() || apematerno.isEmpty()) {
+            return "Error: El Código, 1ER Nombre y ambos Apellidos son obligatorios.";
         }
+
         Estudiante est = new Estudiante(0, codigo, nombre1, nombre2, apepaterno, apematerno, false);
         if (dao.registrarEstudiante(est)) {
             return "Estudiante registrado correctamente.";

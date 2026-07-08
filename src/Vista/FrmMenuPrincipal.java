@@ -7,10 +7,7 @@ package Vista;
 import Controlador.SesionActiva;
 import Controlador.ControladorPrestamo;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class FrmMenuPrincipal extends JFrame {
 
@@ -18,10 +15,28 @@ public class FrmMenuPrincipal extends JFrame {
     private JPanel pnlCentral;
     private CardLayout cardLayout;
 
+    private JButton btnInicio;
+    private JButton btnRegEquipos;
+    private JButton btnRegEstudiantes;
+    private JButton btnRegPrestamos;
+    private JButton btnDevPrestamos;
+    private JButton btnSalir;
+
+    // 1. ADICIÓN: Variables globales para la tabla y el controlador del Dashboard
+    private JTable tablaMovimientos;
+    private ControladorPrestamo ctrlPrestamo = new ControladorPrestamo();
+
+    private final Color COLOR_NORMAL = new Color(47, 53, 66); 
+    private final Color COLOR_ACTIVO = new Color(75, 85, 105); 
+    private final Color TEXTO_NORMAL = new Color(200, 200, 200);
+    private final Color TEXTO_ACTIVO = Color.WHITE;
+
     public FrmMenuPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        activarBoton(btnInicio);
     }
 
     private void initComponents() {
@@ -47,21 +62,21 @@ public class FrmMenuPrincipal extends JFrame {
         lblUsuario.setForeground(new Color(153, 204, 255));
         lblUsuario.setPreferredSize(new Dimension(200, 30));
 
-        JButton btnInicio = crearBotonMenu("Inicio");
-        JButton btnEquipos = crearBotonMenu("Equipos");
-        JButton btnEstudiantes = crearBotonMenu("Registro Estudiantes");
-        JButton btnUsuarios = crearBotonMenu("Usuarios");
-        JButton btnPrestamos = crearBotonMenu("Préstamos");
-        JButton btnSalir = crearBotonMenu("Cerrar Sesión");
+        btnInicio = crearBotonMenu("Inicio");
+        btnRegEquipos = crearBotonMenu("Registro Equipos");
+        btnRegEstudiantes = crearBotonMenu("Registro Estudiantes");
+        btnRegPrestamos = crearBotonMenu("Registro Préstamos");
+        btnDevPrestamos = crearBotonMenu("Devolucion Préstamos");
+        btnSalir = crearBotonMenu("Cerrar Sesión");
         btnSalir.setForeground(new Color(255, 102, 102));
 
         pnlMenuLateral.add(lblMenuTitulo);
         pnlMenuLateral.add(lblUsuario);
         pnlMenuLateral.add(btnInicio);
-        pnlMenuLateral.add(btnEquipos);
-        pnlMenuLateral.add(btnEstudiantes);
-        pnlMenuLateral.add(btnUsuarios);
-        pnlMenuLateral.add(btnPrestamos);
+        pnlMenuLateral.add(btnRegEquipos);
+        pnlMenuLateral.add(btnRegEstudiantes);
+        pnlMenuLateral.add(btnRegPrestamos);
+        pnlMenuLateral.add(btnDevPrestamos);
         pnlMenuLateral.add(btnSalir);
 
         // ==========================================
@@ -70,32 +85,46 @@ public class FrmMenuPrincipal extends JFrame {
         cardLayout = new CardLayout();
         pnlCentral = new JPanel(cardLayout);
         
-        // A. Carta de Inicio (Dashboard con Base de Datos)
         JPanel pnlInicio = construirPanelDashboard();
-        
-        // B. Metemos tus Formularios existentes extrayendo su contenido (El truco maestro)
-        // Nota: Asegúrate de tener creados estos JFrame en tu paquete vista
         JPanel pnlEquipos = (JPanel) new FrmInventario().getContentPane();
         JPanel pnlEstudiantes = (JPanel) new FrmEstudiantes().getContentPane();
-        JPanel pnlUsuarios = (JPanel) new FrmUsuarios().getContentPane();
         JPanel pnlPrestamos = (JPanel) new FrmPrestamos().getContentPane();
+        JPanel pnlDevoluciones = (JPanel) new FrmDevoluciones().getContentPane();
         
-        // Agregamos las "cartas" a la baraja
         pnlCentral.add(pnlInicio, "INICIO");
         pnlCentral.add(pnlEquipos, "EQUIPOS");
         pnlCentral.add(pnlEstudiantes, "ESTUDIANTES");
-        pnlCentral.add(pnlUsuarios, "USUARIOS");
         pnlCentral.add(pnlPrestamos, "PRESTAMOS");
-        // pnlCentral.add((JPanel) new FrmPrestamos().getContentPane(), "PRESTAMOS"); // Descomenta cuando lo crees
+        pnlCentral.add(pnlDevoluciones, "DEVOLUCIONES");
 
         // ==========================================
         // 3. NAVEGACIÓN DE BOTONES
         // ==========================================
-        btnInicio.addActionListener(e -> cardLayout.show(pnlCentral, "INICIO"));
-        btnEquipos.addActionListener(e -> cardLayout.show(pnlCentral, "EQUIPOS"));
-        btnEstudiantes.addActionListener(e -> cardLayout.show(pnlCentral, "ESTUDIANTES"));
-        btnUsuarios.addActionListener(e -> cardLayout.show(pnlCentral, "USUARIOS"));
-        btnPrestamos.addActionListener(e -> cardLayout.show(pnlCentral, "PRESTAMOS"));
+        btnInicio.addActionListener(e -> {
+            activarBoton(btnInicio);
+            actualizarDashboard(); // <-- SOLUCIÓN: Volvemos a consultar la BD antes de mostrar la pantalla
+            cardLayout.show(pnlCentral, "INICIO");
+        });
+        
+        btnRegEquipos.addActionListener(e -> {
+            activarBoton(btnRegEquipos);
+            cardLayout.show(pnlCentral, "EQUIPOS");
+        });
+        
+        btnRegEstudiantes.addActionListener(e -> {
+            activarBoton(btnRegEstudiantes);
+            cardLayout.show(pnlCentral, "ESTUDIANTES");
+        });
+        
+        btnRegPrestamos.addActionListener(e -> {
+            activarBoton(btnRegPrestamos);
+            cardLayout.show(pnlCentral, "PRESTAMOS");
+        });
+        
+        btnDevPrestamos.addActionListener(e -> {
+            activarBoton(btnDevPrestamos);
+            cardLayout.show(pnlCentral, "DEVOLUCIONES");
+        });
         
         btnSalir.addActionListener(e -> {
             SesionActiva.nombreUsuarioActivo = "";
@@ -107,14 +136,44 @@ public class FrmMenuPrincipal extends JFrame {
         add(pnlCentral, BorderLayout.CENTER);
     }
 
+    // ==========================================
+    // NUEVO MÉTODO: Refresca el modelo de la tabla
+    // ==========================================
+    public void actualizarDashboard() {
+        if (tablaMovimientos != null) {
+            // Le pide al controlador un modelo limpio con los nuevos SELECT de la BD
+            tablaMovimientos.setModel(ctrlPrestamo.cargarTablaDashboard());
+            tablaMovimientos.setRowHeight(30); // Mantiene el tamaño de las filas
+        }
+    }
+
+    private void resetearBotonesMenu() {
+        JButton[] botones = {btnInicio, btnRegEquipos, btnRegEstudiantes, btnRegPrestamos, btnDevPrestamos};
+        for (JButton btn : botones) {
+            if (btn != null) {
+                btn.setBackground(COLOR_NORMAL);
+                btn.setForeground(TEXTO_NORMAL);
+                btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            }
+        }
+    }
+
+    private void activarBoton(JButton botonSeleccionado) {
+        resetearBotonesMenu();
+        if (botonSeleccionado != null) {
+            botonSeleccionado.setBackground(COLOR_ACTIVO);
+            botonSeleccionado.setForeground(TEXTO_ACTIVO);
+        }
+    }
+
     private JButton crearBotonMenu(String texto) {
         JButton boton = new JButton(texto);
         boton.setPreferredSize(new Dimension(220, 45));
         boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         boton.setHorizontalAlignment(SwingConstants.LEFT);
         boton.setFocusPainted(false);
-        boton.setBackground(new Color(47, 53, 66));
-        boton.setForeground(Color.WHITE);
+        boton.setBackground(COLOR_NORMAL);
+        boton.setForeground(TEXTO_NORMAL);
         boton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return boton;
@@ -132,7 +191,6 @@ public class FrmMenuPrincipal extends JFrame {
         JPanel pnlResumen = new JPanel(new GridLayout(1, 2, 20, 0));
         pnlResumen.setBackground(new Color(245, 246, 250));
 
-        // Aquí podrías crear métodos similares en tu InventarioDAO para contar esto de la BD
         JLabel lblDisponibles = new JLabel("Equipos Disponibles: --");
         lblDisponibles.setFont(new Font("Segoe UI", Font.BOLD, 18));
         
@@ -148,9 +206,8 @@ public class FrmMenuPrincipal extends JFrame {
         JLabel lblTabla = new JLabel("ÚLTIMOS MOVIMIENTOS");
         lblTabla.setFont(new Font("Segoe UI", Font.BOLD, 16));
         
-        // ¡Magia Pura! Aquí jalamos el modelo directo desde SQL Server usando el Controlador
-        ControladorPrestamo ctrlPrestamo = new ControladorPrestamo();
-        JTable tablaMovimientos = new JTable(ctrlPrestamo.cargarTablaDashboard());
+        // CORRECCIÓN: Quitamos el tipo de dato por delante para usar la variable global
+        tablaMovimientos = new JTable(ctrlPrestamo.cargarTablaDashboard());
         tablaMovimientos.setRowHeight(30);
         JScrollPane scrollTabla = new JScrollPane(tablaMovimientos);
 

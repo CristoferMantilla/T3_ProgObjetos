@@ -22,7 +22,7 @@ public class InventarioDAO {
     public List<Equipo> listarTodo() {
         List<Equipo> lista = new ArrayList<>();
         // Hacemos el SELECT respetando los nombres exactos de tus columnas en SQL Server
-        String sql = "SELECT ID_Equipo, CodigoPatrimonial, Categoria, Marca, DetalleTecnico, Disponible FROM Inventario";
+        String sql = "SELECT ID_Equipo, CodigoPatrimonial, Categoria, Marca, DetalleTecnico, Disponible FROM Inventario WHERE Activo = 1";
 
         try (Connection cn = ConexionSQL.conectar(); // Cambia ConexionSQL por el nombre de tu clase de conexión
              PreparedStatement pst = cn.prepareStatement(sql);
@@ -86,6 +86,50 @@ public class InventarioDAO {
         } catch (SQLException e) {
             System.out.println("Error al registrar equipo en BD: " + e.getMessage());
             return false; // Si explota la base de datos, devuelve falso para que tu controlador lance el mensaje de error
+        }
+    }
+    // ========================================================
+    // MÉTODOS PARA ACTUALIZAR Y ELIMINAR
+    // ========================================================
+
+    public boolean actualizar(Equipo equipo) {
+        String sql = "UPDATE Inventario SET CodigoPatrimonial = ?, Categoria = ?, Marca = ?, DetalleTecnico = ?, Disponible = ? WHERE ID_Equipo = ?";
+        
+        try (Connection cn = ConexionSQL.conectar();
+             PreparedStatement pst = cn.prepareStatement(sql)) {
+             
+            pst.setString(1, equipo.getCodigoPatrimonial());
+            pst.setString(2, equipo.getCategoria());
+            pst.setString(3, equipo.getMarca());
+            pst.setString(4, equipo.getDetalleTecnico());
+            pst.setBoolean(5, equipo.isDisponible());
+            pst.setInt(6, equipo.getIdEquipo()); // ID para saber qué fila modificar
+            
+            return pst.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar equipo: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ========================================================
+    // MÉTODO PARA DAR DE BAJA (BORRADO LÓGICO)
+    // ========================================================
+    public boolean eliminar(int idEquipo) {
+        
+        // Cambiamos el estado a 0 para ocultarlo, protegiendo el historial
+        String sql = "UPDATE Inventario SET Activo = 0 WHERE ID_Equipo = ?";
+        
+        try (java.sql.Connection cn = ConexionSQL.conectar();
+             java.sql.PreparedStatement pst = cn.prepareStatement(sql)) {
+             
+            pst.setInt(1, idEquipo);
+            return pst.executeUpdate() > 0;
+            
+        } catch (java.sql.SQLException e) {
+            System.out.println("Error al dar de baja el equipo: " + e.getMessage());
+            return false;
         }
     }
 }

@@ -43,16 +43,30 @@ public class Prestamo {
     public void setFechaSalida(Date fechaSalida) {
         this.fechaSalida = fechaSalida;
     }
+    public Date getFechaDevolucion() {
+        return fechaDevolucion;
+    }
+
+    public void setFechaDevolucion(Date fechaDevolucion) {
+        this.fechaDevolucion = fechaDevolucion;
+    }
     private int idPrestamo;
     // Composición: Un préstamo está compuesto por un Usuario y un Equipo completos
     private Usuario usuario; 
     private Equipo equipo;   
     private Date fechaSalida;
+    private Date fechaDevolucion;
 
-    public Prestamo(int idPrestamo, Usuario usuario, Equipo equipo, Date fechaSalida) {
+    public Prestamo(int idPrestamo, Usuario usuario, Equipo equipo, Date fechaSalida, Date fechaDevolucion) {
         this.idPrestamo = idPrestamo;
         this.usuario = usuario;
         this.equipo = equipo;
         this.fechaSalida = fechaSalida;
+        this.fechaDevolucion = fechaDevolucion;
     }
+    
+    public Prestamo() {
+        
+    }
+    
 }

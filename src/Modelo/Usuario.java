@@ -18,7 +18,9 @@ public abstract class Usuario {
         this.apellido_paterno = apellido_paterno;
         this.apellido_materno = apellido_materno;
     }
-
+    public Usuario() {
+        
+    }
     public int getIdUsuario() {
         return idUsuario;
     }

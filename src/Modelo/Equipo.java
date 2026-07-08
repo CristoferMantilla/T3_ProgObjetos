@@ -8,7 +8,7 @@ package Modelo;
  *
  * @author crist
  */
-public abstract class Equipo implements Prestable{
+public abstract class Equipo {
 
     public int getIdEquipo() {
         return idEquipo;
@@ -62,5 +62,16 @@ public abstract class Equipo implements Prestable{
         this.marca = marca;
         this.disponible = disponible;
     }
+    public Equipo() {
+        
+    }
     public abstract String getDetalleTecnico();
+    public boolean prestar()
+    {
+    return false;
+    }
+    public void devolver()
+    {
+    }
+    
 }
